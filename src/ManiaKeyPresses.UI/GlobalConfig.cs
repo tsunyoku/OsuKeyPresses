@@ -18,8 +18,6 @@ public static class GlobalConfig
     public static string? OsuClientId { get; private set; }
 
     public static string? OsuClientSecret { get; private set; }
-    
-    public static bool IsOsuConfigured => !string.IsNullOrEmpty(OsuClientId) && !string.IsNullOrEmpty(OsuClientSecret);
 
     public static void Load()
     {

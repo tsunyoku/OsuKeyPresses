@@ -17,8 +17,6 @@ namespace ManiaKeyPresses.UI;
 
 public partial class MainWindow : Window
 {
-    private string? _replayPath;
-
     public MainWindow()
     {
         InitializeComponent();
@@ -45,22 +43,14 @@ public partial class MainWindow : Window
         
         GlobalConfig.UpdateOsuClientSecret(textBox.Text);
     }
-    
+
     private async void LoadReplayButton_Click(object? sender, RoutedEventArgs e)
     {
         if (string.IsNullOrWhiteSpace(GlobalConfig.OsuClientId))
-        {
-            _replayPath = null;
-            ViewModel.SetReplayLoaded(false);
             return;
-        }
 
         if (string.IsNullOrWhiteSpace(GlobalConfig.OsuClientSecret))
-        {
-            _replayPath = null;
-            ViewModel.SetReplayLoaded(false);
             return;
-        }
 
         var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
@@ -70,23 +60,15 @@ public partial class MainWindow : Window
         });
 
         if (!files.Any())
-        {
-            _replayPath = null;
-            ViewModel.SetReplayLoaded(false);
             return;
-        }
 
         var path = files.Single().TryGetLocalPath();
 
         if (Path.GetExtension(path) != ".osr")
-        {
-            _replayPath = null;
-            ViewModel.SetReplayLoaded(false);
             return;
-        }
 
-        _replayPath = files.Single().TryGetLocalPath()!;
-        ViewModel.SetReplayLoaded(true);
+        var replayPath = files.Single().TryGetLocalPath()!;
+        AnalyseReplay(replayPath);
     }
 
     private void Drop(object? sender, DragEventArgs e)
@@ -96,24 +78,21 @@ public partial class MainWindow : Window
         if (file is null)
             return;
 
-        var path = file.TryGetLocalPath();
+        var path = file.TryGetLocalPath()!;
 
         if (Path.GetExtension(path) != ".osr")
             return;
-        
-        _replayPath = path;
-        ViewModel.SetReplayLoaded(true);
-        
-        AnalyzeButton_Click(null, null!);
+
+        AnalyseReplay(path);
     }
     
-    private void AnalyzeButton_Click(object? sender, RoutedEventArgs e)
+    private void AnalyseReplay(string replayPath)
     {
-        if (string.IsNullOrWhiteSpace(_replayPath))
+        if (string.IsNullOrWhiteSpace(replayPath))
             return;
 
         var analyser = new ManiaKeyPressAnalyser(
-            _replayPath,
+            replayPath,
             GlobalConfig.OsuClientId!,
             GlobalConfig.OsuClientSecret!,
             GlobalConfig.BeatmapPath);

@@ -14,7 +14,6 @@
     
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
             <Button Name="LoadReplayButton" Content="Load Replay" Click="LoadReplayButton_Click" IsEnabled="{Binding IsOsuConfigured}"/>
-            <Button Name="AnalyzeButton" Content="Analyze" Click="AnalyzeButton_Click" IsEnabled="{Binding IsReplayLoaded}" Margin="10,0,0,0"/>
         </StackPanel>
         
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">

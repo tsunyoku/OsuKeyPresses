@@ -15,17 +15,8 @@ public class MainViewModel : INotifyPropertyChanged
         };
     }
 
-    public bool IsOsuConfigured => GlobalConfig.IsOsuConfigured;
-    public bool IsReplayLoaded { get; private set; }
-    
-    public void SetReplayLoaded(bool isLoaded)
-    {
-        if (IsReplayLoaded == isLoaded)
-            return;
-
-        IsReplayLoaded = isLoaded;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsReplayLoaded)));
-    }
+    public bool IsOsuConfigured => !string.IsNullOrEmpty(GlobalConfig.OsuClientId) &&
+                                   !string.IsNullOrEmpty(GlobalConfig.OsuClientSecret);
 
     public event PropertyChangedEventHandler? PropertyChanged;
 }

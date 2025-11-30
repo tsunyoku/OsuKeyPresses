@@ -140,7 +140,9 @@ public partial class MainWindow : Window
             {
                 Title = $"key {i + 1}",
                 Color = GetRainbowColor(i, analysis.HoldTimes.Length),
-                StrokeThickness = 2
+                StrokeThickness = 2,
+                TrackerFormatString = "{0}\nHold Time: {2:0} ms\nCount: {4:0}",
+                CanTrackerInterpolatePoints = true,
             };
 
             for (var j = 0; j < analysis.HoldTimes[i].Length; j++)

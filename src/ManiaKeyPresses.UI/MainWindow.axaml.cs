@@ -114,6 +114,8 @@ public partial class MainWindow : Window
             Maximum = 160,
             MajorGridlineStyle = LineStyle.Solid,
             MajorGridlineColor = OxyColors.LightGray,
+            IsZoomEnabled = false,
+            IsPanEnabled = false,
         });
         
         plotModel.Axes.Add(new LinearAxis
@@ -123,6 +125,8 @@ public partial class MainWindow : Window
             TitleFontSize = 15,
             MajorGridlineStyle = LineStyle.Solid,
             MajorGridlineColor = OxyColors.LightGray,
+            IsZoomEnabled = false,
+            IsPanEnabled = false,
         });
         
         plotModel.IsLegendVisible = true;
@@ -142,7 +146,6 @@ public partial class MainWindow : Window
                 Color = GetRainbowColor(i, analysis.HoldTimes.Length),
                 StrokeThickness = 2,
                 TrackerFormatString = "{0}\nHold Time: {2:0} ms\nCount: {4:0}",
-                CanTrackerInterpolatePoints = true,
             };
 
             for (var j = 0; j < analysis.HoldTimes[i].Length; j++)

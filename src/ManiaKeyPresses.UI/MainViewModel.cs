@@ -18,15 +18,15 @@ public class MainViewModel : INotifyPropertyChanged
     public bool IsOsuConfigured => !string.IsNullOrEmpty(GlobalConfig.OsuClientId) &&
                                    !string.IsNullOrEmpty(GlobalConfig.OsuClientSecret);
     
-    public string? CurrentReplayPath { get; private set; }
+    public string? CurrentReplayFileName { get; private set; }
 
-    public bool HasReplay => !string.IsNullOrWhiteSpace(CurrentReplayPath);
+    public bool HasReplay => !string.IsNullOrWhiteSpace(CurrentReplayFileName);
 
-    public void UpdateReplay(string? replayPath)
+    public void UpdateReplay(string? replayFileName)
     {
-        CurrentReplayPath = replayPath;
+        CurrentReplayFileName = replayFileName;
 
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentReplayPath)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentReplayFileName)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasReplay)));
     }
 

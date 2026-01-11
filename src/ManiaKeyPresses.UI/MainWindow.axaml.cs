@@ -159,7 +159,7 @@ public partial class MainWindow : Window
             plotModel.Series.Add(lineSeries);
         }
 
-        ViewModel.UpdateReplay(replayPath);
+        ViewModel.UpdateReplay(Path.GetFileName(replayPath));
         PlotView.Model = plotModel;
     }
 

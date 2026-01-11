@@ -188,7 +188,7 @@ public partial class MainWindow : Window
             var lineSeries = new LineSeries
             {
                 Title = $"key {i + 1}",
-                Color = GetRainbowColor(i, analysis.HoldTimes.Length, ViewModel.IsDarkMode),
+                Color = GetRainbowColour(i, analysis.HoldTimes.Length, ViewModel.IsDarkMode),
                 StrokeThickness = 2,
                 TrackerFormatString = "{0}\nHold Time: {2:0} ms\nCount: {4:0}",
             };
@@ -205,10 +205,10 @@ public partial class MainWindow : Window
         PlotView.Model = plotModel;
     }
 
-    private static OxyColor GetRainbowColor(int index, int total, bool isDarkTheme)
+    private static OxyColor GetRainbowColour(int index, int total, bool isDarkTheme)
     {
-        var saturation = isDarkTheme ? 0.8 : 0.9;
-        var value = isDarkTheme ? 0.9 : 0.8;
+        var saturation = isDarkTheme ? 0.6 : 0.9;
+        var value = isDarkTheme ? 0.85 : 0.8;
 
         var c = value * saturation;
         var m = value - c;

@@ -1,0 +1,142 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:oxy="http://oxyplot.org/avalonia"
+             xmlns:ui="clr-namespace:ManiaKeyPresses.UI"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             x:Class="ManiaKeyPresses.UI.AnalysisWindow"
+             x:DataType="ui:MainViewModel">
+    <Grid ColumnDefinitions="3*,250">
+        <oxy:PlotView Grid.Column="0" Name="PlotView" Margin="10" Background="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
+        
+        <Border Grid.Column="1" 
+                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"
+                BorderThickness="1,0,0,0"
+                Margin="0,10,10,10">
+            <ScrollViewer Padding="15">
+                <StackPanel Spacing="20">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Player Information" 
+                                  FontWeight="Bold" 
+                                  FontSize="16"
+                                  Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                        
+                        <StackPanel Spacing="5">
+                            <Border CornerRadius="8" 
+                                    Width="64" 
+                                    Height="64"
+                                    ClipToBounds="True"
+                                    Background="{DynamicResource SystemControlBackgroundBaseLowBrush}">
+                                <HyperlinkButton 
+                                    NavigateUri="{Binding UserUrl}"
+                                    ToolTip.Tip="Click to view profile!">
+                                    <Image asyncImageLoader:ImageLoader.Source="{Binding UserAvatarUrl}" 
+                                           Stretch="UniformToFill"
+                                           Width="64" 
+                                           Height="64"/>
+                                </HyperlinkButton>
+                            </Border>
+                            
+                            <TextBlock FontSize="14">
+                                <Run Text="Username:"/>
+                                <Run Text="{Binding User.Username}"/>
+                            </TextBlock>
+
+                            <TextBlock FontSize="14">
+                                <Run Text="Rank:"/>
+                                <Run Text="{Binding User.Statistics.GlobalRank, StringFormat='#{0:N0}', FallbackValue='#-'}"/>
+                            </TextBlock>
+                            
+                            <TextBlock FontSize="14">
+                                <Run Text="Country:"/>
+                                <Run Text="{Binding User.Country.Name}"/>
+                            </TextBlock>
+
+                            <TextBlock FontSize="14">
+                                <Run Text="PP:"/>
+                                <Run Text="{Binding User.Statistics.Pp, StringFormat='{}{0:N0}', FallbackValue='-'}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Separator Background="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Score Information" 
+                                  FontWeight="Bold" 
+                                  FontSize="16"
+                                  Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                        
+                        <StackPanel Spacing="5">
+                            <ItemsControl ItemsSource="{Binding ModImagePaths}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+    
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding .}"
+                                               Width="42"
+                                               Height="42"
+                                               Margin="0,0,4,0"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock FontSize="14">
+                                <Run Text="Score:"/>
+                                <Run Text="{Binding ScoreInfo.LegacyTotalScore, StringFormat='{}{0:N0}'}" />
+                            </TextBlock>
+                            
+                            <TextBlock FontSize="14">
+                                <Run Text="Accuracy:"/>
+                                <Run Text="{Binding ScoreAccuracyPercentage, StringFormat='{}{0:F2}%'}" />
+                            </TextBlock>
+
+                            <TextBlock FontSize="14">
+                                <Run Text="Max Combo:"/>
+                                <Run Text="{Binding ScoreInfo.MaxCombo, StringFormat='{}{0:N0}x'}" />
+                            </TextBlock>
+                            
+                            <TextBlock FontSize="14">
+                                <Run Text="Grade:"/>
+                                <Run Text="{Binding ScoreInfo.Rank}" />
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Separator Background="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Hit Statistics" 
+                                  FontWeight="Bold" 
+                                  FontSize="16"
+                                  Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                        
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="5">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Perfect (320):" FontSize="13"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding PerfectCount, StringFormat='{}{0:N0}'}" FontSize="13" HorizontalAlignment="Right"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Great (300):" FontSize="13"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding GreatCount, StringFormat='{}{0:N0}'}"  FontSize="13" HorizontalAlignment="Right"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Good (200):" FontSize="13"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GoodCount, StringFormat='{}{0:N0}'}"  FontSize="13" HorizontalAlignment="Right"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="OK (100):" FontSize="13"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding OkCount, StringFormat='{}{0:N0}'}"  FontSize="13" HorizontalAlignment="Right"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Meh (50):" FontSize="13"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding MehCount, StringFormat='{}{0:N0}'}"  FontSize="13" HorizontalAlignment="Right"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Miss:" FontSize="13"/>
+                            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding MissCount, StringFormat='{}{0:N0}'}"  FontSize="13" HorizontalAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

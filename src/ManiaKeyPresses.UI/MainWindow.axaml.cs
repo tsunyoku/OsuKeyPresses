@@ -4,9 +4,12 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
+using Avalonia.VisualTree;
 using OxyPlot;
 using OxyPlot.Avalonia;
 using OxyPlot.Axes;
@@ -29,17 +32,14 @@ public partial class MainWindow : Window
             Application.Current.RequestedThemeVariant = new ThemeVariant(GlobalConfig.Theme, null);
             ViewModel.UpdateIsDarkMode(GlobalConfig.Theme == "Dark");
         }
-
-        if (ViewModel.IsOsuConfigured)
-            _osuApiClient = new OsuApiClient(GlobalConfig.OsuClientId!, GlobalConfig.OsuClientSecret!);
         
         DragDrop.SetAllowDrop(this, true);
         AddHandler(DragDrop.DropEvent, Drop);
+        
+        AnalysisControl.DataContext = DataContext;
     }
     
     private MainViewModel ViewModel => (MainViewModel)DataContext!;
-
-    private OsuApiClient? _osuApiClient;
     
     private void OsuClientIdTextBox_OnLostFocus(object? sender, RoutedEventArgs e)
     {
@@ -47,9 +47,6 @@ public partial class MainWindow : Window
             return;
         
         GlobalConfig.UpdateOsuClientId(textBox.Text);
-
-        if (ViewModel.IsOsuConfigured)
-            _osuApiClient = new OsuApiClient(GlobalConfig.OsuClientId!, GlobalConfig.OsuClientSecret!);
     }
 
     private void OsuClientSecretTextBox_OnLostFocus(object? sender, RoutedEventArgs e)
@@ -58,9 +55,6 @@ public partial class MainWindow : Window
             return;
         
         GlobalConfig.UpdateOsuClientSecret(textBox.Text);
-
-        if (ViewModel.IsOsuConfigured)
-            _osuApiClient = new OsuApiClient(GlobalConfig.OsuClientId!, GlobalConfig.OsuClientSecret!);
     }
 
     private async void LoadReplayButton_Click(object? sender, RoutedEventArgs e)
@@ -87,7 +81,62 @@ public partial class MainWindow : Window
             return;
 
         var replayPath = files.Single().TryGetLocalPath()!;
-        AnalyseReplay(replayPath);
+        AnalysisControl.AnalyseReplay(replayPath);
+    }
+
+    private async void SaveScreenshotButton_Click(object? sender, RoutedEventArgs e)
+    {
+        using var bitmap = CaptureAnalysisControl();
+
+        var screenshotFileName = $"keypresses_{ViewModel.ScoreInfo!.LegacyOnlineID}.png";
+
+        if (!Directory.Exists(GlobalConfig.ScreenshotPath))
+            Directory.CreateDirectory(GlobalConfig.ScreenshotPath);
+        
+        var path = Path.Combine(GlobalConfig.ScreenshotPath, screenshotFileName);
+        bitmap.Save(path);
+
+        var clipboard = GetTopLevel(this)?.Clipboard;
+
+        if (clipboard is null)
+            return;
+
+        var file = await StorageProvider.TryGetFileFromPathAsync(path);
+        await clipboard.SetFileAsync(file);
+    }
+    
+    /// <summary>
+    /// Captures the analysis control window by making a new, invisible window to render into a bitmap
+    /// </summary>
+    /// <returns></returns>
+    private RenderTargetBitmap CaptureAnalysisControl()
+    {
+        var tempWindow = new Window
+        {
+            Width = AnalysisControl.Bounds.Width,
+            Height = AnalysisControl.Bounds.Height,
+            WindowStartupLocation = WindowStartupLocation.Manual,
+            Position = new PixelPoint(-50000, -50000),
+            ShowInTaskbar = false,
+            SystemDecorations = SystemDecorations.None
+        };
+    
+        var originalParent = (Panel)AnalysisControl.Parent;
+        var originalIndex = originalParent.Children.IndexOf(AnalysisControl);
+
+        originalParent.Children.Remove(AnalysisControl);
+        tempWindow.Content = AnalysisControl;
+        tempWindow.Show();
+
+        var pixelSize = new PixelSize((int)tempWindow.ClientSize.Width, (int)tempWindow.ClientSize.Height);
+        var bitmap = new RenderTargetBitmap(pixelSize);
+        bitmap.Render(tempWindow);
+
+        tempWindow.Content = null;
+        originalParent.Children.Insert(originalIndex, AnalysisControl);
+        tempWindow.Close();
+    
+        return bitmap;
     }
     
     private void ThemeToggleButton_Click(object sender, RoutedEventArgs e)
@@ -117,170 +166,6 @@ public partial class MainWindow : Window
         if (Path.GetExtension(path) != ".osr")
             return;
 
-        AnalyseReplay(path);
-    }
-    
-    private void AnalyseReplay(string replayPath)
-    {
-        if (string.IsNullOrWhiteSpace(replayPath))
-            return;
-
-        var analyser = new ManiaKeyPressAnalyser(
-            replayPath,
-            GlobalConfig.OsuClientId!,
-            GlobalConfig.OsuClientSecret!,
-            GlobalConfig.BeatmapPath);
-
-        var analysis = analyser.AnalyseReplay();
-        
-        var plotModel = new PlotModel
-        {
-            Title = "Key Hold Time Distribution",
-            Background = ViewModel.IsDarkMode ? OxyColors.Black : OxyColors.White,
-            TextColor = ViewModel.IsDarkMode ? OxyColors.White : OxyColors.Black,
-            TitleColor = ViewModel.IsDarkMode ? OxyColors.White : OxyColors.Black,
-            PlotAreaBorderColor = ViewModel.IsDarkMode ? OxyColors.Gray : OxyColors.Black
-        };
-
-        var gridColour = ViewModel.IsDarkMode ? OxyColors.DarkGray : OxyColors.LightGray;
-        var axisColour = ViewModel.IsDarkMode ? OxyColors.White : OxyColors.Black;
-
-        plotModel.Axes.Add(new LinearAxis
-        {
-            Position = AxisPosition.Bottom,
-            Title = "pressing time (ms)",
-            TitleFontSize = 15,
-            TitleColor = axisColour,
-            TextColor = axisColour,
-            AxislineColor = axisColour,
-            TicklineColor = axisColour,
-            Minimum = 0,
-            Maximum = 160,
-            MajorGridlineStyle = LineStyle.Solid,
-            MajorGridlineColor = gridColour,
-            MinorGridlineColor = gridColour,
-            IsZoomEnabled = false,
-            IsPanEnabled = false,
-        });
-
-        double maxHoldTimeCount = analysis.HoldTimeCounts.SelectMany(x => x).Max();
-        
-        plotModel.Axes.Add(new LinearAxis
-        {
-            Position = AxisPosition.Left,
-            Title = "count",
-            TitleFontSize = 15,
-            TitleColor = axisColour,
-            TextColor = axisColour,
-            AxislineColor = axisColour,
-            TicklineColor = axisColour,
-            Maximum = maxHoldTimeCount + maxHoldTimeCount * 0.1,
-            MajorGridlineStyle = LineStyle.Solid,
-            MajorGridlineColor = gridColour,
-            MinorGridlineColor = gridColour,
-            IsZoomEnabled = false,
-            IsPanEnabled = false,
-        });
-        
-        plotModel.IsLegendVisible = true;
-        
-        plotModel.Legends.Add(new Legend
-        {
-            LegendPosition = LegendPosition.RightTop,
-            LegendPlacement = LegendPlacement.Inside,
-            LegendFontSize = 10,
-            LegendTextColor = ViewModel.IsDarkMode ? OxyColors.White : OxyColors.Black,
-            LegendBackground = OxyColors.Transparent,
-            LegendBorder = ViewModel.IsDarkMode ? OxyColors.Gray : OxyColors.LightGray
-        });
-
-        for (var i = 0; i < analysis.HoldTimes.Length; i++)
-        {
-            var lineSeries = new LineSeries
-            {
-                Title = $"key {i + 1}",
-                Color = GetRainbowColour(i, analysis.HoldTimes.Length, ViewModel.IsDarkMode),
-                StrokeThickness = 2,
-                TrackerFormatString = "{0}\nHold Time: {2:0} ms\nCount: {4:0}",
-            };
-
-            for (var j = 0; j < analysis.HoldTimes[i].Length; j++)
-            {
-                lineSeries.Points.Add(new DataPoint(analysis.HoldTimes[i][j], analysis.HoldTimeCounts[i][j]));
-            }
-            
-            plotModel.Series.Add(lineSeries);
-        }
-
-        ViewModel.UpdateReplay(Path.GetFileName(replayPath));
-        ViewModel.UpdateScoreInfo(analysis.Score.ScoreInfo);
-
-        var score = _osuApiClient!.GetLegacyScore(
-            analysis.Score.ScoreInfo.LegacyOnlineID,
-            analysis.Score.ScoreInfo.Ruleset.ShortName);
-
-        var user = _osuApiClient.GetUser(score.UserId, analysis.Score.ScoreInfo.Ruleset.ShortName);
-
-        ViewModel.UpdateUser(user);
-        
-        PlotView.Model = plotModel;
-    }
-
-    private static OxyColor GetRainbowColour(int index, int total, bool isDarkTheme)
-    {
-        var saturation = isDarkTheme ? 0.6 : 0.9;
-        var value = isDarkTheme ? 0.85 : 0.8;
-
-        var c = value * saturation;
-        var m = value - c;
-        
-        // Create a hue using the index & total
-        // Then do standard HSV->RGB conversion
-        // https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
-        var hue = (index * 360.0 / total) % 360.0;
-
-        var x = c * (1 - Math.Abs((hue / 60.0) % 2 - 1));
-    
-        double r, g, b;
-    
-        switch (hue)
-        {
-            case < 60:
-                r = c;
-                g = x;
-                b = 0;
-                break;
-            case < 120:
-                r = x;
-                g = c;
-                b = 0;
-                break;
-            case < 180:
-                r = 0;
-                g = c;
-                b = x;
-                break;
-            case < 240:
-                r = 0;
-                g = x;
-                b = c;
-                break;
-            case < 300:
-                r = x;
-                g = 0;
-                b = c;
-                break;
-            default:
-                r = c;
-                g = 0;
-                b = x;
-                break;
-        }
-    
-        return OxyColor.FromRgb(
-            (byte)((r + m) * 255), 
-            (byte)((g + m) * 255), 
-            (byte)((b + m) * 255)
-        );
+        AnalysisControl.AnalyseReplay(path);
     }
 }

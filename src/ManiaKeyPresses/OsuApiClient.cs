@@ -28,10 +28,8 @@ public class OsuApiClient(string osuClientId, string osuClientSecret)
 
         var response = httpClient.Send(request);
 
-        if (response.StatusCode is HttpStatusCode.NotFound)
+        if (!response.IsSuccessStatusCode)
             return null;
-
-        response.EnsureSuccessStatusCode();
         
         using var jsonResponse = response.Content.ReadAsStream();
 
@@ -57,10 +55,8 @@ public class OsuApiClient(string osuClientId, string osuClientSecret)
 
         var response = httpClient.Send(request);
         
-        if (response.StatusCode is HttpStatusCode.NotFound)
+        if (!response.IsSuccessStatusCode)
             return null;
-
-        response.EnsureSuccessStatusCode();
         
         using var jsonResponse = response.Content.ReadAsStream();
 

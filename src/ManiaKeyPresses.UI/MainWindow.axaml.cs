@@ -9,6 +9,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
+using OxyPlot.Series;
 
 namespace ManiaKeyPresses.UI;
 
@@ -80,7 +81,23 @@ public partial class MainWindow : Window
     {
         using var bitmap = CaptureAnalysisControl();
 
-        var screenshotFileName = $"keypresses_{ViewModel.ScoreInfo!.LegacyOnlineID}.png";
+        var screenshotFileName = $"keypresses_{ViewModel.ScoreInfo!.LegacyOnlineID}";
+
+        var plotModel = AnalysisControl.AnalysisPlot.Model;
+
+        if (!plotModel.Series.OfType<LineSeries>().All(series => series.IsVisible))
+        {
+            var enabledKeys = plotModel.Series
+                .OfType<LineSeries>()
+                .Where(series => series.IsVisible)
+                .Select(series => ((int)series.Tag).ToString())
+                .Order()
+                .ToArray();
+
+            screenshotFileName += $"_{string.Join(string.Empty, enabledKeys)}";
+        }
+
+        screenshotFileName += ".png";
 
         var screenshotFolder = Path.Combine(
             Path.GetDirectoryName(Environment.ProcessPath!)!,

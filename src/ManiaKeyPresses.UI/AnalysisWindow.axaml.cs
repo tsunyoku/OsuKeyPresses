@@ -4,6 +4,7 @@ using System.Linq;
 using Avalonia.Controls;
 using ManiaKeyPresses.Models;
 using OxyPlot;
+using OxyPlot.Avalonia;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using Legend = OxyPlot.Legends.Legend;
@@ -20,6 +21,8 @@ public partial class AnalysisWindow : UserControl
     }
 
     private MainViewModel ViewModel => (MainViewModel)DataContext!;
+
+    public PlotView AnalysisPlot => PlotView;
     
     public void AnalyseReplay(string replayPath)
     {
@@ -103,6 +106,7 @@ public partial class AnalysisWindow : UserControl
                 Color = GetRainbowColour(i, analysis.HoldTimes.Length, GlobalConfig.IsDarkMode),
                 StrokeThickness = 2,
                 TrackerFormatString = "{0}\nHold Time: {2:0} ms\nCount: {4:0}",
+                Tag = i + 1,
             };
 
             for (var j = 0; j < analysis.HoldTimes[i].Length; j++)

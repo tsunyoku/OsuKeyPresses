@@ -2,8 +2,8 @@
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
+using ManiaKeyPresses.Models;
 using OxyPlot;
-using OxyPlot.Avalonia;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using Legend = OxyPlot.Legends.Legend;
@@ -118,11 +118,14 @@ public partial class AnalysisWindow : UserControl
 
         var osuApiClient = new OsuApiClient(GlobalConfig.OsuClientId!, GlobalConfig.OsuClientSecret!);
 
-        var score = osuApiClient!.GetLegacyScore(
+        var score = osuApiClient.GetLegacyScore(
             analysis.Score.ScoreInfo.LegacyOnlineID,
             analysis.Score.ScoreInfo.Ruleset.ShortName);
 
-        var user = osuApiClient.GetUser(score.UserId, analysis.Score.ScoreInfo.Ruleset.ShortName);
+        User? user = null;
+
+        if (score is not null) 
+            user = osuApiClient.GetUser(score.UserId, analysis.Score.ScoreInfo.Ruleset.ShortName);
 
         ViewModel.UpdateUser(user);
         

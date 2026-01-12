@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Linq;
 using Avalonia;
@@ -9,14 +8,6 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
-using Avalonia.VisualTree;
-using OxyPlot;
-using OxyPlot.Avalonia;
-using OxyPlot.Axes;
-using OxyPlot.Legends;
-using Legend = OxyPlot.Legends.Legend;
-using LinearAxis = OxyPlot.Axes.LinearAxis;
-using LineSeries = OxyPlot.Series.LineSeries;
 
 namespace ManiaKeyPresses.UI;
 
@@ -121,7 +112,7 @@ public partial class MainWindow : Window
             SystemDecorations = SystemDecorations.None
         };
     
-        var originalParent = (Panel)AnalysisControl.Parent;
+        var originalParent = (Panel)AnalysisControl.Parent!;
         var originalIndex = originalParent.Children.IndexOf(AnalysisControl);
 
         originalParent.Children.Remove(AnalysisControl);

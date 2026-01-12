@@ -61,6 +61,8 @@ public class MainViewModel : INotifyPropertyChanged
 
     public string? UserAvatarUrl => User is not null ? $"https://a.ppy.sh/{User.Id}" : null;
 
+    public bool PlayerInformationAvailable => User is not null;
+
     public void UpdateReplay(string? replayFileName)
     {
         CurrentReplayFileName = replayFileName;
@@ -91,6 +93,7 @@ public class MainViewModel : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(User)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UserUrl)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UserAvatarUrl)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PlayerInformationAvailable)));
     }
 
     public void UpdateIsDarkMode(bool isDarkMode)

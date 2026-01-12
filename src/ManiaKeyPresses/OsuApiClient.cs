@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using ManiaKeyPresses.Models;
 
@@ -11,7 +12,7 @@ public class OsuApiClient(string osuClientId, string osuClientSecret)
     private static readonly Dictionary<(long, string), Score> Scores = new();
     private static readonly Dictionary<(int, string), User> Users = new();
 
-    public Score GetLegacyScore(long scoreId, string rulesetName)
+    public Score? GetLegacyScore(long scoreId, string rulesetName)
     {
         if (Scores.TryGetValue((scoreId, rulesetName), out var score))
             return score;
@@ -27,6 +28,9 @@ public class OsuApiClient(string osuClientId, string osuClientSecret)
 
         var response = httpClient.Send(request);
 
+        if (response.StatusCode is HttpStatusCode.NotFound)
+            return null;
+
         response.EnsureSuccessStatusCode();
         
         using var jsonResponse = response.Content.ReadAsStream();
@@ -37,7 +41,7 @@ public class OsuApiClient(string osuClientId, string osuClientSecret)
         return score!;
     }
 
-    public User GetUser(int userId, string rulesetName)
+    public User? GetUser(int userId, string rulesetName)
     {
         if (Users.TryGetValue((userId, rulesetName), out var user))
             return user;
@@ -52,6 +56,9 @@ public class OsuApiClient(string osuClientId, string osuClientSecret)
         request.Headers.Add("x-api-version", "99999999");
 
         var response = httpClient.Send(request);
+        
+        if (response.StatusCode is HttpStatusCode.NotFound)
+            return null;
 
         response.EnsureSuccessStatusCode();
         

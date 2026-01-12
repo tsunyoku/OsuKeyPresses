@@ -148,6 +148,9 @@ public partial class MainWindow : Window
 
         ViewModel.UpdateIsDarkMode(newTheme == ThemeVariant.Dark);
         GlobalConfig.UpdateTheme(newTheme);
+        
+        if (ViewModel.HasReplay)
+            AnalysisControl.AnalyseReplay(ViewModel.CurrentReplayPath!);
     }
 
     private void Drop(object? sender, DragEventArgs e)

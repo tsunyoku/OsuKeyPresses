@@ -113,7 +113,7 @@ public partial class AnalysisWindow : UserControl
             plotModel.Series.Add(lineSeries);
         }
 
-        ViewModel.UpdateReplay(Path.GetFileName(replayPath));
+        ViewModel.UpdateReplay(Path.GetFileName(replayPath), replayPath);
         ViewModel.UpdateScoreInfo(analysis.Score.ScoreInfo);
 
         var osuApiClient = new OsuApiClient(GlobalConfig.OsuClientId!, GlobalConfig.OsuClientSecret!);

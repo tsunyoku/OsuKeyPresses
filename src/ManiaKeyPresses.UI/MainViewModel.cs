@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using Avalonia.Controls;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using ManiaKeyPresses.Models;
@@ -29,6 +27,8 @@ public class MainViewModel : INotifyPropertyChanged
                                    !string.IsNullOrEmpty(GlobalConfig.OsuClientSecret);
     
     public string? CurrentReplayFileName { get; private set; }
+    
+    public string? CurrentReplayPath { get; private set; }
 
     public bool HasReplay => !string.IsNullOrWhiteSpace(CurrentReplayFileName);
 
@@ -63,9 +63,10 @@ public class MainViewModel : INotifyPropertyChanged
 
     public bool PlayerInformationAvailable => User is not null;
 
-    public void UpdateReplay(string? replayFileName)
+    public void UpdateReplay(string? replayFileName, string? replayPath)
     {
         CurrentReplayFileName = replayFileName;
+        CurrentReplayPath = replayPath;
 
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentReplayFileName)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasReplay)));

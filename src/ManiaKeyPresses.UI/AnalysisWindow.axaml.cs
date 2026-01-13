@@ -61,7 +61,12 @@ public partial class AnalysisWindow : UserControl
             AxislineColor = axisColour,
             TicklineColor = axisColour,
             Minimum = 0,
-            Maximum = 160,
+            Maximum = replayScore.ScoreInfo.RulesetID switch
+            {
+                1 => 120,
+                3 => 160,
+                _ => throw new InvalidOperationException("Unsupported ruleset"),
+            },
             MajorGridlineStyle = LineStyle.Solid,
             MajorGridlineColor = gridColour,
             MinorGridlineColor = gridColour,

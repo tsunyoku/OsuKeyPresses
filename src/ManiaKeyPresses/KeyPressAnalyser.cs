@@ -4,20 +4,8 @@ using osu.Game.Utils;
 
 namespace ManiaKeyPresses;
 
-public abstract class KeyPressAnalyser
+public abstract class KeyPressAnalyser(Score score)
 {
-    private readonly Score _score;
-
-    public KeyPressAnalyser(string osrFile, string osuClientId, string osuClientSecret, string? beatmapCacheDirectory = null)
-    {
-        var oauthStore = new OAuthStore(osuClientId, osuClientSecret);
-        var beatmapStore = new BeatmapStore(oauthStore, beatmapCacheDirectory);
-        var scoreDecoder = new LocalLegacyScoreDecoder(beatmapStore);
-        
-        using var stream = File.OpenRead(osrFile);
-        _score = scoreDecoder.Parse(stream);
-    }
-    
     protected abstract int KeyCount { get; }
 
     protected abstract int[] GetActiveKeys(ReplayFrame frame);
@@ -31,7 +19,7 @@ public abstract class KeyPressAnalyser
         double previousTime = 0;
         var frameIndex = 0;
 
-        foreach (var replayFrame in _score.Replay.Frames)
+        foreach (var replayFrame in score.Replay.Frames)
         {
             var activeKeys = GetActiveKeys(replayFrame);
 
@@ -72,7 +60,7 @@ public abstract class KeyPressAnalyser
             frameIndex++;
         }
 
-        var rateMultiplier = ModUtils.CalculateRateWithMods(_score.ScoreInfo.Mods);
+        var rateMultiplier = ModUtils.CalculateRateWithMods(score.ScoreInfo.Mods);
 
         var histogram = keyStates
             .Where(state => state.HoldTimes.Any())
@@ -82,7 +70,7 @@ public abstract class KeyPressAnalyser
         return new KeyPressAnalysis(
             histogram.Select(x => x.Times).ToArray(),
             histogram.Select(x => x.Counts).ToArray(),
-            _score);
+            score);
     }
     
     private static (int[] Times, int[] Counts) CreateHistogram(List<int> durations, double rateMultiplier)

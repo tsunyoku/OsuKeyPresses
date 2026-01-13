@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
+using ManiaKeyPresses.Helpers;
 using ManiaKeyPresses.Models;
 using OxyPlot;
 using OxyPlot.Avalonia;
@@ -28,12 +29,19 @@ public partial class AnalysisWindow : UserControl
     {
         if (string.IsNullOrWhiteSpace(replayPath))
             return;
-
-        var analyser = new ManiaKeyPressAnalyser(
+        
+        var replayScore = ReplayHelper.DecodeFromFile(
             replayPath,
             GlobalConfig.OsuClientId!,
             GlobalConfig.OsuClientSecret!,
             GlobalConfig.BeatmapPath);
+
+        KeyPressAnalyser analyser = replayScore.ScoreInfo.RulesetID switch
+        {
+            3 => new ManiaKeyPressAnalyser(replayScore),
+            1 => new TaikoKeyPressAnalyser(replayScore),
+            _ => throw new InvalidOperationException("Unsupported ruleset")
+        };
 
         var analysis = analyser.AnalyseReplay();
         

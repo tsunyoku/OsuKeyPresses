@@ -1,8 +1,10 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
@@ -15,6 +17,8 @@ namespace ManiaKeyPresses.UI;
 
 public partial class MainWindow : Window
 {
+    private readonly WindowNotificationManager _windowNotificationManager;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -30,6 +34,12 @@ public partial class MainWindow : Window
         AddHandler(DragDrop.DropEvent, Drop);
         
         AnalysisControl.DataContext = DataContext;
+
+        _windowNotificationManager = new WindowNotificationManager(this)
+        {
+            Position = NotificationPosition.BottomRight,
+            MaxItems = 3,
+        };
     }
     
     private MainViewModel ViewModel => (MainViewModel)DataContext!;
@@ -116,6 +126,19 @@ public partial class MainWindow : Window
 
         var file = await StorageProvider.TryGetFileFromPathAsync(path);
         await clipboard.SetFileAsync(file);
+
+        var notification = new Notification(
+            "Screenshot saved",
+            $"Screenshot copied to clipboard and saved as {screenshotFileName}",
+            NotificationType.Success,
+            TimeSpan.FromSeconds(5),
+            () => Process.Start(new ProcessStartInfo
+            {
+                FileName = screenshotFolder,
+                UseShellExecute = true,
+            }));
+        
+        _windowNotificationManager.Show(notification);
     }
     
     /// <summary>

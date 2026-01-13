@@ -1,6 +1,9 @@
 # ManiaKeyPresses
 
-A simple tool to calculate hold times for osu!mania replays.
+A simple tool to calculate hold times for osu!mania and osu!taiko replays.
+
+> [!WARNING]
+> osu!taiko support is largely untested currently, please proceed with caution.
 
 ## Usage
 

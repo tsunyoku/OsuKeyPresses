@@ -1,4 +1,4 @@
-# ManiaKeyPresses
+# OsuKeyPresses
 
 A simple tool to calculate hold times for osu!, osu!taiko and osu!mania replays.
 
@@ -7,7 +7,7 @@ A simple tool to calculate hold times for osu!, osu!taiko and osu!mania replays.
 
 ## Usage
 
-Download the tool from the [releases page](https://github.com/tsunyoku/ManiaKeyPresses/releases/latest). Run the `.exe` file, and the UI should open.
+Download the tool from the [releases page](https://github.com/tsunyoku/OsuKeyPresses/releases/latest). Run the `.exe` file, and the UI should open.
 
 You will need to provide osu! API credentials in order to do beatmap look ups. You can get a client ID and client secret for the API from [here](https://osu.ppy.sh/home/account/edit#oauth). These will be persisted across sessions.
 
@@ -15,4 +15,4 @@ Once your credentials are stored, you can click the `Load Replay` button and nav
 
 Alternatively, **you can also drag a replay into the window**.
 
-![](https://github.com/tsunyoku/ManiaKeyPresses/raw/main/resources/mania-demo.png)
+![](https://github.com/tsunyoku/OsuKeyPresses/raw/main/resources/mania-demo.png)

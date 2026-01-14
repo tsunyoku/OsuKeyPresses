@@ -1,0 +1,104 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:OsuKeyPresses.UI"
+        x:Class="OsuKeyPresses.UI.MainWindow"
+        x:DataType="ui:MainViewModel"
+        Title="Replay Analyzer"
+        Width="1300" Height="800">
+    <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="3*,250">
+        <StackPanel Name="TopPanel" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="10">
+            <Button Name="LoadReplayButton" Content="Load Replay" Click="LoadReplayButton_Click" IsEnabled="{Binding IsOsuConfigured}"/>
+        </StackPanel>
+        
+        <StackPanel Name="SettingsPanel" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
+            <Button Click="SaveScreenshotButton_Click"
+                    IsVisible="{Binding HasReplay}"
+                    Margin="0,0,10,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ToolTip.Tip="Save Screenshot">
+                <Path Data="M20,5A2,2 0 0,1 22,7V17A2,2 0 0,1 20,19H4C2.89,19 2,18.1 2,17V7C2,5.89 2.89,5 4,5H20M5,16H19L14.5,10L11,14.5L8.5,11.5L5,16Z"
+                      Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                      Width="20"
+                      Height="20"/>
+            </Button>
+            
+            <Button Name="ThemeToggleButton" 
+                    Background="Transparent" 
+                    BorderThickness="0"
+                    Margin="0,0,10,0"
+                    Click="ThemeToggleButton_Click"
+                    ToolTip.Tip="Toggle Light/Dark Mode">
+                <Grid>
+                    <Path Name="SunIcon"
+                          Data="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L6.76,9.39C6.5,8.65 6.5,7.84 6.76,7.1L3.34,7M3.34,17L6.76,14.61C6.5,15.35 6.5,16.16 6.76,16.9L3.34,17M12,22L9.61,18.58C10.35,18.85 11.16,19 12,19C12.84,19 13.65,18.85 14.39,18.58L12,22M20.66,7L17.24,9.39C17.5,8.65 17.5,7.84 17.24,7.1L20.66,7M20.66,17L17.24,14.61C17.5,15.35 17.5,16.16 17.24,16.9L20.66,17Z"
+                          Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                          Width="20"
+                          Height="20"
+                          IsVisible="{Binding IsDarkMode}"/>
+
+                    <Path Name="MoonIcon"
+                          Data="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.4 6.35,17.41C9.37,20.43 14,20.54 17.33,17.97Z"
+                          Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                          Width="20"
+                          Height="20"
+                          IsVisible="{Binding !IsDarkMode}"/>
+                </Grid>
+            </Button>
+
+            <Button Name="SettingsButton" Background="Transparent" BorderThickness="0">
+                <Button.Flyout>
+                    <Flyout Placement="BottomEdgeAlignedRight">
+                        <StackPanel Spacing="10" MinWidth="250">
+                            <TextBlock Text="Settings" FontWeight="Bold" FontSize="14"/>
+                            <Separator/>
+                            
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="osu! client ID"/>
+                                <TextBox
+                                    Name="OsuClientIdTextBox"
+                                    PasswordChar="*"
+                                    RevealPassword="false"
+                                    Width="200"
+                                    Text="{x:Static ui:GlobalConfig.OsuClientId}"
+                                    LostFocus="OsuClientIdTextBox_OnLostFocus"
+                                    HorizontalAlignment="Left"/>
+                            </StackPanel>
+
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="osu! client secret"/>
+                                <TextBox
+                                    Name="OsuClientSecretTextBox"
+                                    PasswordChar="*"
+                                    RevealPassword="false"
+                                    Width="200"
+                                    Text="{x:Static ui:GlobalConfig.OsuClientSecret}"
+                                    LostFocus="OsuClientSecretTextBox_OnLostFocus"
+                                    HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+                
+                <Path Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11.03L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11.03C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" 
+                      Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                      Width="20"
+                      Height="20"/>
+            </Button>
+        </StackPanel>
+        
+        <StackPanel Name="ReplayPanel" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5">
+            <TextBlock IsVisible="{Binding HasReplay}" Margin="10">
+                <Run Text="Currently selected replay: "/>
+                <Run Text="{Binding CurrentReplayFileName}"/>
+            </TextBlock>
+        </StackPanel>
+        
+        <ui:AnalysisWindow
+            x:Name="AnalysisControl"
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            IsVisible="{Binding HasReplay}"/>
+    </Grid>
+</Window>

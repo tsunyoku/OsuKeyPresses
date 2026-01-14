@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AsyncImageLoader.Avalonia" Version="3.5.0" />
+    <PackageReference Include="Avalonia" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.9">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-Avalonia11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OsuKeyPresses\OsuKeyPresses.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\Mods\DT.png" />
+    <AvaloniaResource Include="Assets\Mods\HR.png" />
+    <AvaloniaResource Include="Assets\Mods\HD.png" />
+    <AvaloniaResource Include="Assets\Mods\SD.png" />
+    <AvaloniaResource Include="Assets\Mods\EZ.png" />
+    <AvaloniaResource Include="Assets\Mods\MR.png" />
+    <AvaloniaResource Include="Assets\Mods\RD.png" />
+    <AvaloniaResource Include="Assets\Mods\5K.png" />
+    <AvaloniaResource Include="Assets\Mods\8K.png" />
+    <AvaloniaResource Include="Assets\Mods\FI.png" />
+    <AvaloniaResource Include="Assets\Mods\6K.png" />
+    <AvaloniaResource Include="Assets\Mods\NF.png" />
+    <AvaloniaResource Include="Assets\Mods\7K.png" />
+    <AvaloniaResource Include="Assets\Mods\4K.png" />
+    <AvaloniaResource Include="Assets\Mods\3K.png" />
+    <AvaloniaResource Include="Assets\Mods\9K.png" />
+    <AvaloniaResource Include="Assets\Mods\PF.png" />
+    <AvaloniaResource Include="Assets\Mods\HT.png" />
+    <AvaloniaResource Include="Assets\Mods\FL.png" />
+    <AvaloniaResource Include="Assets\Mods\2K.png" />
+    <AvaloniaResource Include="Assets\Mods\NC.png" />
+    <AvaloniaResource Include="Assets\Mods\1K.png" />
+    <AvaloniaResource Include="Assets\Rulesets\catch.png" />
+    <AvaloniaResource Include="Assets\Rulesets\taiko.png" />
+    <AvaloniaResource Include="Assets\Rulesets\mania.png" />
+    <AvaloniaResource Include="Assets\Rulesets\osu.png" />
+  </ItemGroup>
+</Project>

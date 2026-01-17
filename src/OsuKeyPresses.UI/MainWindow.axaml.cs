@@ -97,6 +97,9 @@ public partial class MainWindow : Window
         }
 
         var replayPath = files.Single().TryGetLocalPath()!;
+
+        Title = $"Replay Analyser - {Path.GetFileName(replayPath)}";
+        
         AnalysisControl.AnalyseReplay(replayPath);
     }
 

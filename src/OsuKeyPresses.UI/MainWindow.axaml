@@ -99,13 +99,6 @@
             </Button>
         </StackPanel>
         
-        <StackPanel Name="ReplayPanel" Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5">
-            <TextBlock IsVisible="{Binding HasReplay}" Margin="10">
-                <Run Text="Currently selected replay: "/>
-                <Run Text="{Binding CurrentReplayFileName}"/>
-            </TextBlock>
-        </StackPanel>
-        
         <ui:AnalysisWindow
             x:Name="AnalysisControl"
             Grid.Row="2"

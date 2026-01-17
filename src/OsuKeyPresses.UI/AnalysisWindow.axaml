@@ -42,7 +42,7 @@
                                 </HyperlinkButton>
                             </Border>
                             
-                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="5">
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="5">
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Username:" FontSize="14"/>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding User.Username}" FontSize="14" HorizontalAlignment="Right"/>
 
@@ -51,9 +51,6 @@
                                 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Country:" FontSize="14"/>
                                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding User.Country.Name}" FontSize="14" HorizontalAlignment="Right"/>
-
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="PP:" FontSize="14"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding User.Statistics.Pp, StringFormat='{}{0:N0}', FallbackValue='-'}" FontSize="14" HorizontalAlignment="Right"/>
                             </Grid>
                         </StackPanel>
                     </StackPanel>
@@ -84,7 +81,7 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="5">
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="5">
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Score:" FontSize="14"/>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ScoreInfo.LegacyTotalScore, StringFormat='{}{0:N0}'}" FontSize="14" HorizontalAlignment="Right"/>
                                 
@@ -93,9 +90,6 @@
 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Max Combo:" FontSize="14"/>
                                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ScoreInfo.MaxCombo, StringFormat='{}{0:N0}x'}" FontSize="14" HorizontalAlignment="Right"/>
-                                
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Grade:" FontSize="14"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ScoreInfo.Rank}" FontSize="14" HorizontalAlignment="Right"/>
                             </Grid>
                         </StackPanel>
                     </StackPanel>

@@ -3,7 +3,7 @@
         xmlns:ui="clr-namespace:OsuKeyPresses.UI"
         x:Class="OsuKeyPresses.UI.MainWindow"
         x:DataType="ui:MainViewModel"
-        Title="Replay Analyzer"
+        Title="Replay Analyser"
         Width="1300" Height="800">
     <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="3*,250">
         <StackPanel Name="TopPanel" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="10">
